@@ -23,7 +23,12 @@ var mongoose = require('mongoose');
 var db = require("./models/models");
 
 // connect to db
-mongoose.connect('mongodb://localhost/gitnaughty');
+//mongoose.connect('mongodb://localhost/gitnaughty');
+mongoose.connect(
+  process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+  'mongodb://localhost/gitnaughty' // plug in the db name you've been using
+);
 
 // STATIC ROUTES
 
@@ -238,6 +243,6 @@ app.put('/api/posts/:postid/authors/:authorid', function(req, res){
 
 
 // set server to localhost:3000
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000) {
   console.log('magic happens and server started on localhost:3000');
 });
