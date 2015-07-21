@@ -32,9 +32,6 @@ var PostSchema = new Schema({
 
 var Post = mongoose.model('Post', PostSchema);
 
-
-
-
 module.exports.Post = Post;
 module.exports.Comment = Comment;
 module.exports.Author = Author;
