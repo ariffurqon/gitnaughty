@@ -236,13 +236,5 @@ app.put('/api/posts/:postid/authors/:authorid', function(req, res){
   });
 });
 
-
-
-
-
-
-
 // set server to localhost:3000
-app.listen(process.env.PORT || 3000) {
-  console.log('magic happens and server started on localhost:3000');
-});
+app.listen(process.env.PORT || 3000);
