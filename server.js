@@ -4,7 +4,8 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
     User = require('./models/user'),
-    session = require('express-session');
+    session = require('express-session'),
+    db = require ('./models/post');
 
 // connect to mongodb
 mongoose.connect(
@@ -104,13 +105,13 @@ app.get('/logout', function (req, res) {
 app.get('/api/posts', function (req, res) {
   // find all posts from the database and
   // populate all of the post's author information
-  db.Post.find({}).populate('author').exec(function(err, allPosts){
+  db.Post.find().exec(function(err, posts){
     if (err){
       console.log("! error: ", err);
       res.status(500).send(err);
     } else {
       // send all posts as JSON response
-      res.json(allPosts); 
+      res.json(posts); 
     }
   });
 });
