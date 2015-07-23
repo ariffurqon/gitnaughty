@@ -2,8 +2,8 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     bcrypt = require('bcrypt'),
-    salt = bcrypt.genSaltSync(10);
-    // Product = require('./product');
+    salt = bcrypt.genSaltSync(10),
+    Post = require('./post');
 
 // define user schema
 var UserSchema = new Schema({
@@ -11,8 +11,7 @@ var UserSchema = new Schema({
   lastName: String,
   avatar: String,
   email: String,
-  passwordDigest: String,
-  // product: [Product.schema]
+  passwordDigest: String
 });
 
 // create a new user with secure (hashed) password
@@ -46,8 +45,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
 
     // throw error if can't find user
     if (user === null) {
-      throw new Error('Can\'t find user with email ' + email);
-
+      callback('Can\'t find user with email ' + email, null);
     // if found user, check if password is correct
     } else if (user.checkPassword(password)) {
       callback(null, user);

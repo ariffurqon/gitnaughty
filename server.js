@@ -46,7 +46,7 @@ app.use('/', function (req, res, next) {
     req.user = null;
   };
 
-  next();
+  next(); // required for middleware
 });
 
 // STATIC ROUTES
@@ -80,16 +80,19 @@ app.post('/users', function (req, res) {
     // log in user immediately when created
     req.login(user);
     console.log("Logged in!")
-    res.redirect('/profile');
+    res.redirect('/index');
   });
 });
 
 // authenticate user and set session
 app.post('/login', function (req, res) {
-  var userData = req.body.user;
-  User.authenticate(userData.email, userData.password, function (err, user) {
-    req.login(user);
-    res.redirect('/profile');
+  User.authenticate(req.body.email, req.body.password, function (err, user) {
+    if (user) {
+      req.login(user);
+      res.send(user);
+    } else if (err) {
+      res.send(err)
+    }
   });
 });
 
@@ -98,6 +101,18 @@ app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
 });
+
+// pre-seeded post data
+// var posts =[
+//   {id: 1, author: "Jessica Rabbit", text: "Settle in for a night of pampering: No pricey spa required. Use your empty wallets as an excuse to stay in — and up — all night. Run a bubble bath and then treat each other to full-body massages. Sleep in the next day."},
+//   {id: 3, author: "Aubrey", text: "Does he drive you up a wall sometimes? He probably feels the same way about you, so put on your sneakers and head to an indoor rock-climbing gym. Challenge him to a race to the top and relieve sore muscles with a hot shower together afterward. Just try not to gloat too much about beating him."},
+//   {id: 2, author: "Henry", text: "Spend the day picking fruit at a local farm. Once you've picked all the apples you can carry back to the car, get creative in the kitchen and think up some recipes with the fruit you picked. Judge each other's creations, Top Chef style."},
+//   {id: 4, author: "Daniel", text: "Been relearning geometry to help niece -- owning triangles so hard right now."},
+//   {id: 5, author: "Arif", text: "Head to the bookstore and walk through the aisles together, showing each other your favorite books, bonding over the books you both hated, and flipping through a Kama Sutra book for ideas for later!"},
+// ];
+// var totalPostCount = 5;
+
+
 
 // API ROUTES
 
@@ -174,8 +189,9 @@ app.put('/api/posts/:id', function(req, res) {
   var targetId = req.params.id;
 
   // find item in `posts` array matching the id
-  db.Post.findOne({_id: targetId}, function(err, foundPost){
-    console.log(foundPost); 
+  Post.findOne({_id: targetId}, function(err, foundPost){
+    //console.log(foundPost); 
+    res.json(foundPost);
 
     if(err){
       res.status(500).send(err);
@@ -186,6 +202,7 @@ app.put('/api/posts/:id', function(req, res) {
 
       // update the post's text
       foundPost.text = req.body.text;
+      //console.log(foundPost); 
 
       // save the changes
       foundPost.save(function(err, savedPost){

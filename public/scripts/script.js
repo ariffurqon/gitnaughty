@@ -2,6 +2,37 @@
 
 $(function() {
 
+  $('#login-form').submit(function (event) {
+    event.preventDefault();
+    
+    var user = {
+      email: $('#email').val(),
+      password: $('#password').val()
+    }
+
+    console.log(user);
+
+    $.post('/login', user, function(data) {
+      console.log(data);
+    })
+  });
+
+  $('#signup-form').submit(function (event) {
+    event.preventDefault();
+    
+    var user = {
+      email: $('#email').val(),
+      password: $('#password').val()
+    }
+
+    console.log(user);
+
+    $.post('/login', user, function(data) {
+      console.log(data);
+    })
+  });
+
+
   // `postsController` holds all our post funtionality
   var postsController = {
     
@@ -14,9 +45,9 @@ $(function() {
         
         // iterate through allPosts
         _.each(allPosts, function(post) {
-          // pass each post object through template and append to view
+          // pass each post object through template and prepend to view
           var $postHtml = $(postsController.template(post));
-          $('#post-list').append($postHtml);
+          $('#post-list').prepend($postHtml);
         });
         // add event-handlers to posts for updating/deleting
         postsController.addEventHandlers();
@@ -27,9 +58,9 @@ $(function() {
       var postData = {author: newAuthor, text: newText};
       // send POST request to server to create new post
       $.post('/api/posts', postData, function(data) {
-        // pass post object through template and append to view
+        // pass post object through template and prepend to view
         var $postHtml = $(postsController.template(data));
-        $('#post-list').append($postHtml);
+        $('#post-list').prepend($postHtml);
       });
     },
 
@@ -43,7 +74,8 @@ $(function() {
           text: updatedText
         },
         success: function(data) {
-          // pass post object through template and append to view
+          console.log(data);
+          // pass post object through template and prepend to view
           var $postHtml = $(postsController.template(data));
           $('#post-' + postId).replaceWith($postHtml);
         }
@@ -82,7 +114,7 @@ $(function() {
     },
 
     setupView: function() {
-      // append existing posts to view
+      // prepend existing posts to view
       postsController.all();
       
       // add event-handler to new-post form
