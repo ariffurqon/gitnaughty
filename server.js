@@ -21,7 +21,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(session({
   saveUninitialized: true,
   resave: true,
-  secret: 'SuperSecretCookie',
+  secret: 'DirtyLittleBlogger',
   cookie: { maxAge: 60000 }
 }));
 
@@ -74,24 +74,27 @@ app.get('/profile', function (req, res) {
 
 // create new user with secure password
 app.post('/users', function (req, res) {
+  // console.log(req.body);
   var newUser = req.body.user;
   User.createSecure(newUser, function (err, user) {
-    console.log("new User", newUser);
+    console.log("new User", user);
     // log in user immediately when created
     req.login(user);
-    console.log("Logged in!")
-    res.redirect('/index');
+    console.log("Logged in! have fun..")
+    res.redirect('/');
   });
 });
 
+
+
 // authenticate user and set session
 app.post('/login', function (req, res) {
-  User.authenticate(req.body.email, req.body.password, function (err, user) {
+  User.authenticate(req.body.user.email, req.body.user.password, function (err, user) {
     if (user) {
       req.login(user);
-      res.send(user);
+      res.redirect("/")
     } else if (err) {
-      res.send(err)
+      res.redirect("/")
     }
   });
 });
@@ -116,11 +119,27 @@ app.get('/logout', function (req, res) {
 
 // API ROUTES
 
+//show current user
+app.get('/api/users/current', function (req, res){
+  //check for current (logged-in) user
+  req.currentUser(function (err, user) {
+    if (err || !(user)) {
+      return res.status(404).json({err: "Please Login"})
+    }
+    res.json(user);
+  });
+
+});
+
+
 // get all posts
 app.get('/api/posts', function (req, res) {
   // find all posts from the database and
   // populate all of the post's author information
-  db.Post.find().exec(function(err, posts){
+  db.Post
+  .find({})
+  .populate("author")
+  .exec(function(err, posts){
     if (err){
       console.log("! error: ", err);
       res.status(500).send(err);
@@ -136,27 +155,31 @@ app.post('/api/posts', function (req, res) {
   // use params (author and text) from request body
 
   // create the author (we'll assume it doesn't exist yet)
-  var newAuthor = new db.Author({
-    name: req.body.author
-  });
-  newAuthor.save();
+  req.currentUser(function (err, user) {
 
-  // create a new post
-  var newPost = new db.Post({
-    author: newAuthor._id,
-    text: req.body.text
-  });
+  
+    // create a new post
+    var newPost = new db.Post({
+      author: user ? user._id : null,
+      text: req.body.text
+    });
 
-  // save new post in db
-  newPost.save(function (err, savedPost) { 
-    if (err) {
-      console.log("error: ",err);
-      res.status(500).send(err);
-    } else {
-      // once saved, send the new post as JSON response
-      res.json(savedPost);
-    }
-  });
+    // save new post in db
+    newPost.save(function (err, savedPost) { 
+      if (err) {
+        console.log("error: ",err);
+        res.status(500).send(err);
+      } else {
+        db.Post
+        .findOne({"_id": savedPost._id})
+        .populate("author")
+        .exec(function (err, post) {
+          res.json(post)
+        })
+      }
+    });
+  })
+
 });
 
 // get a single post 
@@ -181,7 +204,6 @@ app.get('/api/posts/:id', function(req, res) {
 });
 
 
-
 // update single post
 app.put('/api/posts/:id', function(req, res) {
 
@@ -189,17 +211,19 @@ app.put('/api/posts/:id', function(req, res) {
   var targetId = req.params.id;
 
   // find item in `posts` array matching the id
-  Post.findOne({_id: targetId}, function(err, foundPost){
-    //console.log(foundPost); 
-    res.json(foundPost);
 
+  db.Post
+  .findOne({_id: targetId})
+  .populate("author")
+  .exec(function(err, foundPost){
+    //console.log(foundPost); 
+    console.log("UPDATING")
     if(err){
       res.status(500).send(err);
-
+    } else if (req.session.userId !== foundPost.author.id) {
+      console.log(req.session.userId, foundPost.author.id )
+      res.status(403).send({err: "NOT AUTHORIZED"})
     } else {
-      // update the post's author
-      foundPost.author = req.body.author;
-
       // update the post's text
       foundPost.text = req.body.text;
       //console.log(foundPost); 
@@ -215,7 +239,8 @@ app.put('/api/posts/:id', function(req, res) {
       });
     }
 
-  });
+  })
+
 
 });
 
@@ -224,16 +249,18 @@ app.delete('/api/posts/:id', function(req, res) {
 
   // take the value of the id from the url parameter
   var targetId = req.params.id;
-
- // remove item from the db that matches the id
-   db.Post.findOneAndRemove({_id: targetId}, function (err, deletedPost) {
-    if (err){
-      res.status(500).send(err);
-    } else {
-      // send back deleted post
-      res.json(deletedPost);
-    }
-  });
+  db.Post
+    .findOne({ "_id": targetId }, function (err, post) {
+      console.log("DELETE", req.session.userId, post.author)
+      if (req.session.userId && req.session.userId === post.author.toString()) {
+        db.Post
+          .remove({ "_id": targetId }, function (err, post) {
+            res.send("DELETED")
+          });
+      } else {
+        res.status(403).send("FORBIDDEN") 
+      }
+    })
 });
 
 
@@ -314,12 +341,5 @@ app.put('/api/posts/:postid/authors/:authorid', function(req, res){
   });
 });
 
-
-
-
 app.listen(process.env.PORT || 3000);
 
-// listen on port 3000
-// app.listen(process.env.PORT || 3000, function () {
-//   console.log('magic happens and server started on localhost:3000 helloooo...');
-// });

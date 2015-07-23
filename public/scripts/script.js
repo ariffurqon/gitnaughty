@@ -2,35 +2,35 @@
 
 $(function() {
 
-  $('#login-form').submit(function (event) {
-    event.preventDefault();
+  // $('#login-form').submit(function (event) {
+  //   event.preventDefault();
     
-    var user = {
-      email: $('#email').val(),
-      password: $('#password').val()
-    }
+  //   var user = {
+  //     email: $('#email').val(),
+  //     password: $('#password').val()
+  //   }
 
-    console.log(user);
+  //   console.log(user);
 
-    $.post('/login', user, function(data) {
-      console.log(data);
-    })
-  });
+  //   $.post('/login', user, function(data) {
+  //     console.log(data);
+  //   })
+  // }); 
 
-  $('#signup-form').submit(function (event) {
-    event.preventDefault();
+  // $('#signup-form').submit(function (event) {
+  //   event.preventDefault();
     
-    var user = {
-      email: $('#email').val(),
-      password: $('#password').val()
-    }
-
-    console.log(user);
-
-    $.post('/login', user, function(data) {
-      console.log(data);
-    })
-  });
+  //   var user = {
+  //     email: $('#emailSignUp').val(),
+  //     password: $('#passwordSignUp').val()
+  //   }
+  //   console.log(user);
+    
+    
+  //   $.post('/users', user, function(data) {
+  //     console.log('hi');
+  //   })
+  // });
 
 
   // `postsController` holds all our post funtionality
@@ -42,6 +42,7 @@ $(function() {
     all: function() {
       $.get('/api/posts', function(data) {
         var allPosts = data;
+        console.log(data)
         
         // iterate through allPosts
         _.each(allPosts, function(post) {
@@ -57,11 +58,18 @@ $(function() {
     create: function(newAuthor, newText) {
       var postData = {author: newAuthor, text: newText};
       // send POST request to server to create new post
-      $.post('/api/posts', postData, function(data) {
-        // pass post object through template and prepend to view
-        var $postHtml = $(postsController.template(data));
-        $('#post-list').prepend($postHtml);
-      });
+      $.get("/api/users/current")
+      .then(function () {
+        $.post('/api/posts', postData, function(data) {
+          // pass post object through template and prepend to view
+          var $postHtml = $(postsController.template(data));
+          $('#post-list').prepend($postHtml);
+        });
+      })
+      .fail(function () {
+        $('#login-modal').modal('show')    
+      })
+
     },
 
     update: function(postId, updatedAuthor, updatedText) {
@@ -78,6 +86,10 @@ $(function() {
           // pass post object through template and prepend to view
           var $postHtml = $(postsController.template(data));
           $('#post-' + postId).replaceWith($postHtml);
+        },
+        error: function () {
+          console.log("ERRORS!", $('#update-' + postId))
+          $('#update-' + postId).collapse();
         }
       });
     },
@@ -131,6 +143,7 @@ $(function() {
     }
   };
 
+  postsController.addEventHandlers();
   postsController.setupView();
 
 });

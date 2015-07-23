@@ -39,7 +39,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"><strike>get </strike>git Naughty</a>
+          <a class="navbar-brand" href="#"><strike>get </strike>git Naughty <br></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -60,27 +60,27 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="myModalLabel">Sign Up</h4>
         </div>
-        <form method="post" id="signup-form">
+        <form method="POST" action= '/users' id="signup-form">
           <div class="modal-body">
-<!--             <div class="form-group">
+            <div class="form-group">
               <input type="text" name="user[firstName]" class="form-control" placeholder="First Name">
             </div>
             <div class="form-group">
               <input type="text" name="user[lastName]" class="form-control" placeholder="Last Name">
             </div>
-            <div class="form-group">
+  <!--           <div class="form-group">
               <input type="text" name="user[avatar]" class="form-control" placeholder="Avatar (Image URL)">
             </div> -->
             <div class="form-group">
-              <input type="email" name="user[email]" class="form-control" placeholder="Email" id="email">
+              <input type="email" name="user[email]" class="form-control" placeholder="Email" id="emailSignUp">
             </div>
             <div class="form-group">
-              <input type="password" name="user[password]" class="form-control" placeholder="Password" id="password">
+              <input type="password" name="user[password]" class="form-control" placeholder="Password" id="passwordSignUp">
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <input type="submit" value="Sign Up" class="btn btn-primary">
+            <input  type="submit" value="Sign Up" class="btn btn-primary">
           </div>
         </form>
       </div>
@@ -95,7 +95,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="myModalLabel">Log In</h4>
         </div>
-        <form method="post" id="login-form">
+        <form method="post" action="/login" id="login-form">
           <div class="modal-body">
             <div class="form-group">
               <input type="email" name="user[email]" class="form-control" placeholder="Email" id="email">
@@ -113,14 +113,14 @@
     </div>
   </div>
 
-  <h1><a class="heading">Feeling Naughty? Feeling Nice?</a></h1>
+  <!--<h3><a class="heading">being bad has never felt so good.. </a></h3>
 
 
    <!-- page content -->
   <div class="container">
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
-        
+      <small> ..being bad has never felt so good<small>
         <!-- new post form-->
       <!--   <textarea class="form-control" rows="3" id="message-title" placeholder="Life's too short, do kiss and tell.." autofocus></textarea> -->
         <form class="form-inline" id="new-post">
@@ -173,7 +173,7 @@
 
         <!-- post content -->
         <p><%= text %></p>
-        <p> - <%= author["name"] %></p>
+        <p> - <%= author ? (author["firstName"] || "John") + " " + (author["lastName"] || "Doe"): "John Doe" %></p>
 
 
         <!-- form to update post -->

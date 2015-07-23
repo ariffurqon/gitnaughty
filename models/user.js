@@ -16,6 +16,7 @@ var UserSchema = new Schema({
 
 // create a new user with secure (hashed) password
 UserSchema.statics.createSecure = function (userData, callback) {
+  console.log(userData);
   // `this` references our schema
   // store it in variable `that` because `this` changes context in nested callbacks
   var that = this;

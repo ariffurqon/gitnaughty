@@ -24,7 +24,7 @@ var Author = mongoose.model('Author', AuthorSchema);
 var PostSchema = new Schema({
 	author: {
 		type: Schema.Types.ObjectId,
-		ref: 'Author'
+		ref: 'User'
 	},
 	text: String,
 	comments: [CommentSchema]

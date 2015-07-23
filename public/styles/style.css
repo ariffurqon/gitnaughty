@@ -6,6 +6,8 @@ body {
 
 .navbar {
   margin-bottom: 20px;
+  padding-bottom: 15px;
+
 }
 
 
@@ -32,6 +34,7 @@ body {
 .my-button-group{
   display: inline-block; 
   float: right;
+
 }
 
 #new-text{
