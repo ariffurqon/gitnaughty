@@ -85,8 +85,6 @@ app.post('/users', function (req, res) {
   });
 });
 
-
-
 // authenticate user and set session
 app.post('/login', function (req, res) {
   User.authenticate(req.body.user.email, req.body.user.password, function (err, user) {
@@ -104,18 +102,6 @@ app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
 });
-
-// pre-seeded post data
-// var posts =[
-//   {id: 1, author: "Jessica Rabbit", text: "Settle in for a night of pampering: No pricey spa required. Use your empty wallets as an excuse to stay in — and up — all night. Run a bubble bath and then treat each other to full-body massages. Sleep in the next day."},
-//   {id: 3, author: "Aubrey", text: "Does he drive you up a wall sometimes? He probably feels the same way about you, so put on your sneakers and head to an indoor rock-climbing gym. Challenge him to a race to the top and relieve sore muscles with a hot shower together afterward. Just try not to gloat too much about beating him."},
-//   {id: 2, author: "Henry", text: "Spend the day picking fruit at a local farm. Once you've picked all the apples you can carry back to the car, get creative in the kitchen and think up some recipes with the fruit you picked. Judge each other's creations, Top Chef style."},
-//   {id: 4, author: "Daniel", text: "Been relearning geometry to help niece -- owning triangles so hard right now."},
-//   {id: 5, author: "Arif", text: "Head to the bookstore and walk through the aisles together, showing each other your favorite books, bonding over the books you both hated, and flipping through a Kama Sutra book for ideas for later!"},
-// ];
-// var totalPostCount = 5;
-
-
 
 // API ROUTES
 
