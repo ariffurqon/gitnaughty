@@ -2,37 +2,6 @@
 
 $(function() {
 
-  // $('#login-form').submit(function (event) {
-  //   event.preventDefault();
-    
-  //   var user = {
-  //     email: $('#email').val(),
-  //     password: $('#password').val()
-  //   }
-
-  //   console.log(user);
-
-  //   $.post('/login', user, function(data) {
-  //     console.log(data);
-  //   })
-  // }); 
-
-  // $('#signup-form').submit(function (event) {
-  //   event.preventDefault();
-    
-  //   var user = {
-  //     email: $('#emailSignUp').val(),
-  //     password: $('#passwordSignUp').val()
-  //   }
-  //   console.log(user);
-    
-    
-  //   $.post('/users', user, function(data) {
-  //     console.log('hi');
-  //   })
-  // });
-
-
   // `postsController` holds all our post funtionality
   var postsController = {
     
